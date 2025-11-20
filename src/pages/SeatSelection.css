@@ -1,0 +1,374 @@
+.seat-selection {
+  padding: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+  min-height: 80vh;
+  padding-bottom: 120px; /* Space for fixed summary */
+}
+
+.back-btn {
+  background: #333;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 2rem;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.back-btn:hover {
+  background: #555;
+  transform: translateX(-5px);
+}
+
+.booking-header {
+  background: #1a1a1a;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  border: 1px solid #333;
+}
+
+.movie-info-small {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.movie-poster-small {
+  width: 80px;
+  height: 120px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.movie-details-small h1 {
+  font-size: 1.5rem;
+  color: white;
+  margin: 0 0 0.5rem 0;
+}
+
+.movie-details-small p {
+  color: #ccc;
+  margin: 0 0 0.5rem 0;
+}
+
+.booking-steps {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 3rem;
+  gap: 2rem;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0.5;
+  transition: opacity 0.3s ease;
+}
+
+.step.active {
+  opacity: 1;
+}
+
+.step.completed {
+  opacity: 1;
+}
+
+.step-number {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #333;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.step.active .step-number {
+  background: #e50914;
+}
+
+.step.completed .step-number {
+  background: #00ba7c;
+}
+
+.step-text {
+  font-size: 0.9rem;
+  color: #ccc;
+  white-space: nowrap;
+}
+
+.seat-selection-container {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.screen-indicator {
+  margin-bottom: 3rem;
+}
+
+.screen {
+  background: linear-gradient(90deg, #333, #555, #333);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  display: inline-block;
+  margin-bottom: 2rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.seats-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: center;
+  margin-bottom: 3rem;
+}
+
+.seat-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.row-label {
+  color: #666;
+  font-weight: bold;
+  min-width: 20px;
+  font-size: 0.9rem;
+}
+
+.seat {
+  width: 35px;
+  height: 35px;
+  border: 2px solid #444;
+  border-radius: 6px;
+  background: #333;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.8rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.seat:hover:not(.occupied):not(.selected) {
+  background: #555;
+  border-color: #e50914;
+  transform: scale(1.1);
+}
+
+.seat.regular.available {
+  background: #333;
+  border-color: #666;
+}
+
+.seat.premium.available {
+  background: #2a1a1a;
+  border-color: #e50914;
+}
+
+.seat.selected {
+  background: #e50914;
+  border-color: #e50914;
+  transform: scale(1.1);
+}
+
+.seat.occupied {
+  background: #222;
+  border-color: #333;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.seat-legend {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #ccc;
+  font-size: 0.9rem;
+}
+
+.legend-item .seat {
+  cursor: default;
+  transform: none;
+}
+
+.legend-item .seat:hover {
+  transform: none;
+}
+
+.selection-summary {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #1a1a1a;
+  border-top: 2px solid #e50914;
+  padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
+}
+
+.summary-details h3 {
+  color: white;
+  margin: 0 0 0.5rem 0;
+}
+
+.summary-details p {
+  color: #ccc;
+  margin: 0;
+}
+
+.proceed-btn {
+  background: #e50914;
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.proceed-btn:hover:not(:disabled) {
+  background: #f40612;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(229, 9, 20, 0.4);
+}
+
+.proceed-btn:disabled {
+  background: #666;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 50vh;
+  gap: 1rem;
+  text-align: center;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+  font-size: 1.2rem;
+  color: #666;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.loading::after {
+  content: '';
+  width: 40px;
+  height: 40px;
+  border: 4px solid #333;
+  border-top: 4px solid #e50914;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .seat-selection {
+    padding: 1rem;
+    padding-bottom: 140px;
+  }
+
+  .movie-info-small {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+
+  .booking-steps {
+    gap: 1rem;
+  }
+
+  .step-text {
+    font-size: 0.8rem;
+  }
+
+  .seat {
+    width: 30px;
+    height: 30px;
+    font-size: 0.7rem;
+  }
+
+  .seat-legend {
+    gap: 1rem;
+  }
+
+  .legend-item {
+    font-size: 0.8rem;
+  }
+
+  .selection-summary {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .proceed-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .seat {
+    width: 25px;
+    height: 25px;
+    font-size: 0.6rem;
+  }
+
+  .row-label {
+    font-size: 0.8rem;
+    min-width: 15px;
+  }
+
+  .seat-legend {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
