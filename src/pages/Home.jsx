@@ -10,7 +10,6 @@ const Home = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    // ✅ Load real TMDB popular movies by default instead of dummy data
     fetchTMDBPopular();
   }, []);
 
@@ -19,7 +18,6 @@ const Home = () => {
       setLoading(true);
       setError('');
       const response = await axios.get('/api/tmdb/popular');
-      console.log('🌟 TMDB Popular movies loaded:', response.data);
       setMovies(response.data);
     } catch (error) {
       console.error('Error fetching TMDB movies:', error);
@@ -88,7 +86,7 @@ const Home = () => {
         {searchQuery && (
           <button onClick={clearSearch} className="clear-btn">
             ✕ Clear
-          </button>
+        </button>
         )}
         <button onClick={fetchTMDBPopular} className="refresh-btn">
           🔄 Refresh
