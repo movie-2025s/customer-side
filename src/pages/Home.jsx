@@ -67,9 +67,9 @@ const Home = () => {
 
   return (
     <div className="home">
-      <h1 className="page-title">🎬 Popular Movies</h1>
+      <h1 className="page-title">North Star Movies</h1>
       <p className="page-subtitle">
-        Discover the latest and most popular movies from The Movie Database
+        Discover the latest and most popular movies at North Star
       </p>
       
       <div className="search-bar">
