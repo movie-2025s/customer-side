@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import axios from 'axios';
 import './Confirmation.css';
 
 const Confirmation = () => {
@@ -30,31 +31,23 @@ const Confirmation = () => {
 
     setIsSubmitting(true);
 
-    // Simulate API call
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Generate booking confirmation
-      const bookingData = {
-        bookingId: `BK${Date.now()}`,
-        movie,
-        theatre,
-        showtime,
-        seats: selectedSeats,
-        totalAmount,
-        customerInfo,
-        bookingDate: new Date().toISOString()
-      };
-
-      // In a real app, you would save this to database
-      console.log('Booking confirmed:', bookingData);
-      
-      // Navigate to success page
-      navigate('/booking-success', { state: { booking: bookingData } });
-      
+      const resp = await axios.post('/api/bookings', {
+        showtimeId,
+        seatIds: selectedSeats.map(s => s.id),
+        customer: customerInfo,
+        movie: { id: movie?.id, title: movie?.title }
+      });
+      const booking = resp.data;
+      navigate('/booking-success', { state: { booking } });
     } catch (error) {
       console.error('Booking failed:', error);
-      alert('Booking failed. Please try again.');
+      const msg = error?.response?.data?.message || 'Booking failed. Please try again.';
+      if (error?.response?.status === 409 && error?.response?.data?.seats) {
+        alert(`${msg} Unavailable: ${error.response.data.seats.join(', ')}`);
+      } else {
+        alert(msg);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -137,7 +130,7 @@ const Confirmation = () => {
             </div>
             <div className="summary-row total">
               <span>Total Amount:</span>
-              <span className="amount">₹{totalAmount}</span>
+              <span className="amount">€{Number(totalAmount).toFixed(2)}</span>
             </div>
           </div>
         </div>
@@ -211,7 +204,7 @@ const Confirmation = () => {
               Processing...
             </>
           ) : (
-            `Confirm Booking - ₹${totalAmount}`
+            `Confirm Booking - €${Number(totalAmount).toFixed(2)}`
           )}
         </button>
       </div>

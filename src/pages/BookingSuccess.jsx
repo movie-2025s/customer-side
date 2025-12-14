@@ -56,7 +56,7 @@ const BookingSuccess = () => {
             
             <div className="detail-row">
               <span>Total Amount:</span>
-              <span className="amount">₹{booking.totalAmount}</span>
+              <span className="amount">€{Number(booking.totalAmount).toFixed(2)}</span>
             </div>
           </div>
 

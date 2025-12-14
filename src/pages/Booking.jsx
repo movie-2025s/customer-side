@@ -8,52 +8,15 @@ const Booking = () => {
   const navigate = useNavigate();
   const [movie, setMovie] = useState(null);
   const [theatres, setTheatres] = useState([]);
+  const [dateYMD, setDateYMD] = useState(() => new Date().toISOString().slice(0, 10));
   const [selectedTheatre, setSelectedTheatre] = useState(null);
   const [selectedShowtime, setSelectedShowtime] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // Mock theatres data - we'll replace this with real data later
-  const mockTheatres = [
-    {
-      id: 1,
-      name: "PVR Cinemas - Forum Mall",
-      location: "Koramangala, Bangalore",
-      showtimes: [
-        { id: 1, time: "10:00 AM", price: 250, available: true },
-        { id: 2, time: "01:30 PM", price: 280, available: true },
-        { id: 3, time: "04:45 PM", price: 300, available: true },
-        { id: 4, time: "08:00 PM", price: 350, available: true },
-        { id: 5, time: "11:15 PM", price: 300, available: false }
-      ]
-    },
-    {
-      id: 2,
-      name: "INOX - Garuda Mall",
-      location: "Magrath Road, Bangalore",
-      showtimes: [
-        { id: 6, time: "11:00 AM", price: 270, available: true },
-        { id: 7, time: "02:15 PM", price: 290, available: true },
-        { id: 8, time: "05:30 PM", price: 320, available: true },
-        { id: 9, time: "09:00 PM", price: 370, available: true }
-      ]
-    },
-    {
-      id: 3,
-      name: "Cinepolis - Orion Mall",
-      location: "Malleswaram, Bangalore",
-      showtimes: [
-        { id: 10, time: "10:30 AM", price: 260, available: true },
-        { id: 11, time: "01:45 PM", price: 285, available: true },
-        { id: 12, time: "05:00 PM", price: 310, available: true },
-        { id: 13, time: "08:30 PM", price: 360, available: true }
-      ]
-    }
-  ];
-
   useEffect(() => {
     fetchMovieAndTheatres();
-  }, [id]);
+  }, [id, dateYMD]);
 
   const fetchMovieAndTheatres = async () => {
     try {
@@ -64,8 +27,9 @@ const Booking = () => {
       const movieResponse = await axios.get(`/api/tmdb/movie/${id}`);
       setMovie(movieResponse.data);
 
-      // For now, use mock theatres data
-      setTheatres(mockTheatres);
+      // Load theatres and showtimes from backend (Finland)
+      const thResp = await axios.get(`/api/booking/options`, { params: { movieId: id, date: dateYMD } });
+      setTheatres(thResp.data || []);
 
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -86,17 +50,17 @@ const Booking = () => {
     }
   };
 
- const proceedToSeatSelection = () => {
-  if (selectedTheatre && selectedShowtime) {
-    navigate(`/seats/${selectedShowtime.id}`, {
-      state: {
-        movie: movie,
-        theatre: selectedTheatre,
-        showtime: selectedShowtime
-      }
-    });
-  }
-};
+  const proceedToSeatSelection = () => {
+    if (selectedTheatre && selectedShowtime) {
+      navigate(`/seats/${selectedShowtime.id}`, {
+        state: {
+          movie: movie,
+          theatre: selectedTheatre,
+          showtime: selectedShowtime
+        }
+      });
+    }
+  };
 
   if (loading) {
     return <div className="loading">Loading booking information...</div>;
@@ -122,8 +86,8 @@ const Booking = () => {
       {movie && (
         <div className="booking-header">
           <div className="movie-info-small">
-            <img 
-              src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`} 
+            <img
+              src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
               alt={movie.title}
               className="movie-poster-small"
             />
@@ -157,11 +121,23 @@ const Booking = () => {
 
       <div className="theatre-selection">
         <h2>Select Theatre & Showtime</h2>
-        
+
+        <div className="date-selector">
+          <label htmlFor="booking-date">Date</label>
+          <input
+            id="booking-date"
+            type="date"
+            value={dateYMD}
+            min={new Date().toISOString().slice(0,10)}
+            max={new Date(Date.now() + 6*24*60*60*1000).toISOString().slice(0,10)}
+            onChange={(e) => setDateYMD(e.target.value)}
+          />
+        </div>
+
         <div className="theatres-list">
           {theatres.map(theatre => (
-            <div 
-              key={theatre.id} 
+            <div
+              key={theatre.id}
               className={`theatre-card ${selectedTheatre?.id === theatre.id ? 'selected' : ''}`}
               onClick={() => handleTheatreSelect(theatre)}
             >
@@ -169,14 +145,13 @@ const Booking = () => {
                 <h3>{theatre.name}</h3>
                 <p className="theatre-location">{theatre.location}</p>
               </div>
-              
+
               <div className="showtimes">
                 {theatre.showtimes.map(showtime => (
                   <button
                     key={showtime.id}
-                    className={`showtime-btn ${
-                      selectedShowtime?.id === showtime.id ? 'selected' : ''
-                    } ${!showtime.available ? 'unavailable' : ''}`}
+                    className={`showtime-btn ${selectedShowtime?.id === showtime.id ? 'selected' : ''
+                      } ${!showtime.available ? 'unavailable' : ''}`}
                     onClick={(e) => {
                       e.stopPropagation();
                       handleShowtimeSelect(showtime);
@@ -184,7 +159,7 @@ const Booking = () => {
                     disabled={!showtime.available}
                   >
                     <span className="time">{showtime.time}</span>
-                    <span className="price">₹{showtime.price}</span>
+                    <span className="price">€{showtime.price.toFixed ? showtime.price.toFixed(2) : showtime.price}</span>
                     {!showtime.available && (
                       <span className="sold-out">Sold Out</span>
                     )}
@@ -200,9 +175,9 @@ const Booking = () => {
             <div className="summary-details">
               <h3>Selected Show</h3>
               <p><strong>{selectedTheatre.name}</strong></p>
-              <p>{selectedShowtime.time} • ₹{selectedShowtime.price}</p>
+              <p>{selectedShowtime.time} • €{selectedShowtime.price.toFixed ? selectedShowtime.price.toFixed(2) : selectedShowtime.price}</p>
             </div>
-            <button 
+            <button
               onClick={proceedToSeatSelection}
               className="proceed-btn"
             >
@@ -215,4 +190,4 @@ const Booking = () => {
   );
 };
 
-export default Booking;
+export default Booki

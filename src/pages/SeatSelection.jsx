@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import axios from 'axios';
 import './SeatSelection.css';
 
 const SeatSelection = () => {
@@ -7,46 +8,34 @@ const SeatSelection = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { movie, theatre, showtime } = location.state || {};
-  
+
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [seats, setSeats] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Mock seat data - we'll replace this with real data later
-  const generateSeats = () => {
-    const rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
-    const seatsPerRow = 10;
-    const seatLayout = [];
-
-    rows.forEach(row => {
-      const rowSeats = [];
-      for (let i = 1; i <= seatsPerRow; i++) {
-        // Randomly mark some seats as occupied
-        const isOccupied = Math.random() < 0.2; // 20% chance
-        const seatType = row === 'A' || row === 'B' ? 'premium' : 'regular';
-        
-        rowSeats.push({
-          id: `${row}${i}`,
-          row: row,
-          number: i,
-          type: seatType,
-          price: seatType === 'premium' ? showtime?.price + 50 : showtime?.price,
-          occupied: isOccupied,
-          selected: false
-        });
-      }
-      seatLayout.push(rowSeats);
-    });
-
-    return seatLayout;
-  };
-
   useEffect(() => {
-    // Simulate loading seats data
-    setTimeout(() => {
-      setSeats(generateSeats());
-      setLoading(false);
-    }, 1000);
+    const load = async () => {
+      try {
+        setLoading(true);
+        const resp = await axios.get(`/api/showtimes/${showtimeId}`);
+        // Map priceEUR to price to keep UI minimal-touch
+        const layout = (resp.data?.seats || []).map(row => row.map(s => ({
+          id: s.id,
+          row: s.row,
+          number: s.number,
+          type: s.type,
+          price: s.priceEUR,
+          occupied: s.occupied,
+          selected: false
+        })));
+        setSeats(layout);
+      } catch (e) {
+        console.error('Failed to load seats', e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
   }, [showtimeId]);
 
   const handleSeatClick = (seat) => {
@@ -109,8 +98,8 @@ const SeatSelection = () => {
 
       <div className="booking-header">
         <div className="movie-info-small">
-          <img 
-            src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`} 
+          <img
+            src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
             alt={movie.title}
             className="movie-poster-small"
           />
@@ -149,14 +138,12 @@ const SeatSelection = () => {
               {row.map(seat => (
                 <button
                   key={seat.id}
-                  className={`seat ${seat.type} ${
-                    seat.occupied ? 'occupied' : ''
-                  } ${
-                    selectedSeats.find(s => s.id === seat.id) ? 'selected' : ''
-                  }`}
+                  className={`seat ${seat.type} ${seat.occupied ? 'occupied' : ''
+                    } ${selectedSeats.find(s => s.id === seat.id) ? 'selected' : ''
+                    }`}
                   onClick={() => handleSeatClick(seat)}
                   disabled={seat.occupied}
-                  title={`${seat.id} - ₹${seat.price}`}
+                  title={`${seat.id} - €${seat.price.toFixed ? seat.price.toFixed(2) : seat.price}`}
                 >
                   {seat.number}
                 </button>
@@ -169,11 +156,11 @@ const SeatSelection = () => {
         <div className="seat-legend">
           <div className="legend-item">
             <div className="seat available"></div>
-            <span>Available (₹{showtime.price})</span>
+            <span>Available (€{showtime.price?.toFixed ? showtime.price.toFixed(2) : showtime.price})</span>
           </div>
           <div className="legend-item">
             <div className="seat premium available"></div>
-            <span>Premium (₹{showtime.price + 50})</span>
+            <span>Premium (€{showtime.price && (showtime.price + 2.5).toFixed ? (showtime.price + 2.5).toFixed(2) : (showtime.price + 2.5)})</span>
           </div>
           <div className="legend-item">
             <div className="seat occupied"></div>
@@ -192,13 +179,13 @@ const SeatSelection = () => {
           {selectedSeats.length > 0 ? (
             <div>
               <p><strong>Seats: </strong>{selectedSeats.map(seat => seat.id).join(', ')}</p>
-              <p><strong>Total: </strong>₹{calculateTotal()}</p>
+              <p><strong>Total: </strong>€{calculateTotal().toFixed(2)}</p>
             </div>
           ) : (
             <p>No seats selected</p>
           )}
         </div>
-        <button 
+        <button
           onClick={proceedToConfirmation}
           className="proceed-btn"
           disabled={selectedSeats.length === 0}
