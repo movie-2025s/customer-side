@@ -18,7 +18,7 @@ const SeatSelection = () => {
       try {
         setLoading(true);
         const resp = await axios.get(`/api/showtimes/${showtimeId}`);
-        // Map priceEUR to price to keep UI minimal-touch
+        
         const layout = (resp.data?.seats || []).map(row => row.map(s => ({
           id: s.id,
           row: s.row,
