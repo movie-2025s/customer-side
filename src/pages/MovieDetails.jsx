@@ -23,7 +23,7 @@ const MovieDetails = () => {
       const response = await axios.get(`/api/tmdb/movie/${id}`);
       setMovie(response.data);
     } catch (error) {
-      console.error('Error fetching movie details:', error);
+      
       setError('Failed to load movie details.');
     } finally {
       setLoading(false);

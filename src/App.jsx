@@ -4,8 +4,8 @@ import Home from './pages/Home';
 import MovieDetails from './pages/MovieDetails';
 import Booking from './pages/Booking';
 import SeatSelection from './pages/SeatSelection';
-import Confirmation from './pages/Confirmation'; // Add this import
-import BookingSuccess from './pages/BookingSuccess'; // Add this import
+import Confirmation from './pages/Confirmation'; 
+import BookingSuccess from './pages/BookingSuccess'; 
 import Navbar from './components/Navbar';
 import './App.css';
 

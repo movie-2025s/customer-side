@@ -8,7 +8,6 @@ const MovieCard = ({ movie }) => {
   const handleClick = () => {
     // Use the TMDB movie ID directly
     const movieId = movie.id;
-    console.log('🎬 Navigating to movie ID:', movieId);
     navigate(`/movie/${movieId}`);
   };
 
