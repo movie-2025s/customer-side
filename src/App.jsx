@@ -19,8 +19,8 @@ function App() {
           <Route path="/movie/:id" element={<MovieDetails />} />
           <Route path="/book/:id" element={<Booking />} />
           <Route path="/seats/:showtimeId" element={<SeatSelection />} />
-          <Route path="/confirmation/:showtimeId" element={<Confirmation />} /> {/* Add this */}
-          <Route path="/booking-success" element={<BookingSuccess />} /> {/* Add this */}
+          <Route path="/confirmation/:showtimeId" element={<Confirmation />} /> 
+          <Route path="/booking-success" element={<BookingSuccess />} /> 
         </Routes>
       </div>
     </Router>
